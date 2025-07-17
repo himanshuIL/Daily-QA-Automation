@@ -1,69 +1,46 @@
-package test;
+package qa.tests;
 
-import org.openqa.selenium.Keys;
+import com.aventstack.extentreports.Status;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import qa.Retry;
+import qa.pages.LoginPage;
+import qa.responseDto.AvatarHomePage;
+import utilities.Base;
+import utilsApi.RefactoredRestAssuredHelper;
 
-import java.time.Duration;
-import java.util.List;
+import static utilsWeb.CommonFunctionsWeb.*;
 
-@Test
-public class MyTest {
-        public static void main(String[] args) {
-            // Setup ChromeOptions
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--disable-notifications");
+@Test(description = "Sign Up and Login Flow for Coca Cola Website")
+public class Automation extends Base {
+    @DataProvider(name = "LoginCredentials")
+    public Object[][] createData1() {
+        return new Object[][]{
+                {"7669966400", OTP}
+        };
+    }
 
-            // Launch Chrome6
-            WebDriver driver = new ChromeDriver(options);
-
-            try {
-                // Open Supertails website
-                driver.get("https://www.supertails.com/");
-                driver.manage().window().maximize();
-                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-
-
-                WebElement searchbox = driver.findElement(By.id("mainfrm"));
-                searchbox.sendKeys("Pedigree");
-                searchbox.sendKeys(Keys.ENTER);
-                // Click on the search icon (usually a magnifying glass)
-                WebElement searchIcon = driver.findElement(By.cssSelector("button[aria-label='Search']"));
-                searchIcon.click();
-
-                // Wait a little
-                Thread.sleep(1000);
-
-                // Find the search input field
-               WebElement searchInput = driver.findElement(By.xpath("//input[@placeholder='Search']"));
-
-               // Enter search query
-               searchInput.sendKeys("dog food");
-
-               // Submit search (press Enter)
-               searchInput.submit();
-
-                // Wait for results to load
-               Thread.sleep(3000);
-
-               // Grab the search results
-               List<WebElement> results = driver.findElements(By.cssSelector("a.product-name"));
-
-               // Print product titles
-               System.out.println("Search Results for 'dog food':");
-               for (WebElement result : results) {
-                   System.out.println("- " + result.getText());
-               }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                // Close browser
-                driver.quit();
-            }
+    @Test(description = "SuperTails Web | Login & Sign Up Flow | LoginSignUp_HLS_001_TC_001 : Home Page Validations and Invalid Login Credentials Flow", dataProvider = "LoginCredentials", alwaysRun = true, groups = "smoke")
+    public void openCocaColaWebsite(String phoneNo, int otp) {
+        try {
+            openURL(Base.getProperty().getProperty("application"), true);
+            // click(LoginPage.crossButtonOnSurpriseMePopUp, "Close Button on Surprise Me Pop Up");
+            click(LoginPage.ProfileSearchOnPage, "Clicking on Search Button");
+            click(LoginPage.ProfileSearchOnPage.Keys.ARROW_DOWN, "Select Search Option");
+            click(LoginPage.ProfileSearchOnPage.Keys.ENTER, "Click on Login Button");
+        } catch (Exception e) {
+            testLevelReport.get().log(Status.FAIL, "Test Execution Failed for : " + getClass().getAnnotation(Test.class).description());
         }
+    }
+
+    @Test(description = "CocaCola API | Login & Sign Up Flow | LoginSignUp_HLS_001_TC_002 : Validate GET API for getting avatar on Home Page", alwaysRun = true, enabled = true, groups = "sanity")
+    public void hitGetAPIForAvatarOnCocaColaHomePage() {
+        try {
+            String requestUrl = "https://supertails.com/";
+            compareAndLog(avatarHomePage.status, 200, "Response Status Code Check");
+            compareAndLog(avatarHomePage.message, "Request successful", "Response Message Check");
+        } catch (Exception e) {
+            testLevelReport.get().log(Status.FAIL, "Test Execution Failed for : " + getClass().getAnnotation(Test.class).description() + e.getMessage());
+        }
+    }
 }
