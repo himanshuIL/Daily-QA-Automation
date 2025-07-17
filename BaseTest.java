@@ -1,96 +1,69 @@
-package generic;
+package test;
 
-import java.awt.AWTException;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.time.Duration;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
-
+import org.openqa.selenium.Keys;
+import org.testng.annotations.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
 
-import com.google.common.io.Files;
+import java.time.Duration;
+import java.util.List;
 
-public class BaseTest extends Libraries {
+@Test
+public class MyTest {
+        public static void main(String[] args) {
+            // Setup ChromeOptions
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--disable-notifications");
 
-	public static WebDriver driver;
+            // Launch Chrome6
+            WebDriver driver = new ChromeDriver(options);
 
-	
+            try {
+                // Open Supertails website
+                driver.get("https://www.supertails.com/");
+                driver.manage().window().maximize();
+                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
-	@BeforeClass
-	public void openBrowser() throws Exception {
-		System.out.println("Your OS version-->" + System.getProperty("os.name"));
-		String osname = System.getProperty("os.name");
-		ChromeOptions co = new ChromeOptions();
-		
-		co.addArguments("--disable-notifications");
-	      
-		driver = new ChromeDriver(co);
 
-		System.out.println("Browser launched");
-		driver.get(Libraries.fetchPropertyValue("prodURL").toString());
-		System.out.println("URL Launched");
-		driver.manage().window().maximize();
-		System.out.println("browser maximized sucessfully");
-		Thread.sleep(2000);
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
-	}
-	@AfterClass
-	public void closeBrowser() throws Exception {
+                WebElement searchbox = driver.findElement(By.id("mainfrm"));
+                searchbox.sendKeys("Pedigree");
+                searchbox.sendKeys(Keys.ENTER);
+                // Click on the search icon (usually a magnifying glass)
+                WebElement searchIcon = driver.findElement(By.cssSelector("button[aria-label='Search']"));
+                searchIcon.click();
 
-		runAllureReportFolderCommand();
-		Thread.sleep(8000);
-		generateReport();
-		generic.Email h = new generic.Email();
-		h.sendEmail("reportSS/reportSS_.png");
-		System.out.println("browser closed");
-		driver.quit();
-	}
-	protected static String getClipboardText() throws IOException, UnsupportedFlavorException {
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		DataFlavor flavor = DataFlavor.stringFlavor;
-		return (String) clipboard.getData(flavor);
-	}
+                // Wait a little
+                Thread.sleep(1000);
 
-	private void runAllureReportFolderCommand() throws Exception {
-		String command = Libraries.fetchPropertyValue("allureCommand2").toString();
-		try {
-			Process process = Runtime.getRuntime().exec(command);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				System.out.println(line);
-			}
-			process.waitFor(); 
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+                // Find the search input field
+//                WebElement searchInput = driver.findElement(By.xpath("//input[@placeholder='Search']"));
+//
+//                // Enter search query
+//                searchInput.sendKeys("dog food");
+//
+//                // Submit search (press Enter)
+//                searchInput.submit();
+
+                // Wait for results to load
+//                Thread.sleep(3000);
+//
+//                // Grab the search results
+//                List<WebElement> results = driver.findElements(By.cssSelector("a.product-name"));
+//
+//                // Print product titles
+//                System.out.println("Search Results for 'dog food':");
+//                for (WebElement result : results) {
+//                    System.out.println("- " + result.getText());
+//                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                // Close browser
+                driver.quit();
+            }
+        }
 }
