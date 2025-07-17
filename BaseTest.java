@@ -39,25 +39,25 @@ public class MyTest {
                 Thread.sleep(1000);
 
                 // Find the search input field
-//                WebElement searchInput = driver.findElement(By.xpath("//input[@placeholder='Search']"));
-//
-//                // Enter search query
-//                searchInput.sendKeys("dog food");
-//
-//                // Submit search (press Enter)
-//                searchInput.submit();
+               WebElement searchInput = driver.findElement(By.xpath("//input[@placeholder='Search']"));
+
+               // Enter search query
+               searchInput.sendKeys("dog food");
+
+               // Submit search (press Enter)
+               searchInput.submit();
 
                 // Wait for results to load
-//                Thread.sleep(3000);
-//
-//                // Grab the search results
-//                List<WebElement> results = driver.findElements(By.cssSelector("a.product-name"));
-//
-//                // Print product titles
-//                System.out.println("Search Results for 'dog food':");
-//                for (WebElement result : results) {
-//                    System.out.println("- " + result.getText());
-//                }
+               Thread.sleep(3000);
+
+               // Grab the search results
+               List<WebElement> results = driver.findElements(By.cssSelector("a.product-name"));
+
+               // Print product titles
+               System.out.println("Search Results for 'dog food':");
+               for (WebElement result : results) {
+                   System.out.println("- " + result.getText());
+               }
 
             } catch (Exception e) {
                 e.printStackTrace();
